@@ -62,7 +62,7 @@ echo "woc_help          Examples of use"
 
 woc_help(){
 echo "woc_info - Retrieves information about the state of the chain for the selected network"
-echo "Examples:"$'\n'"woc_info"$'\n'$'\n'"woc_info test"$'\n'"woc_info stn"$'\n'
+echo "Examples:"$'\n'"woc_info"$'\n'"woc_info test"$'\n'"woc_info stn"$'\n'
 
 echo "woc_circulatingsupply - Retrieves the circulating supply of BSV"
 echo "Example:"$'\n'"woc_circulatingsupply"$'\n'
