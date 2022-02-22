@@ -282,6 +282,7 @@ echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$n
   --header "Content-Type: application/json" \
   --data "{\"txids\" : ["$1" ] }") | jq
 }
+
 woc_rawtxout(){
 if [[ -z "$1" ]]; then  echo "missing input"; return; fi
 net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
