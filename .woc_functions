@@ -68,7 +68,7 @@ echo "woc_circulatingsupply - Retrieves the circulating supply of BSV"
 echo "Example:"$'\n'"woc_circulatingsupply"$'\n'
 
 echo "woc_tips - Retrieves information about all known tips in the block tree"
-echo "Example:"$'\n'"woc_tips"$'\n'
+echo "Example:"$'\n'"woc_tips"$'\n'"woc_tips stn"$'\n'
 
 echo "woc_blockhash - Retrieves the block details of a given hash"
 echo "Example:"$'\n'\
@@ -83,13 +83,15 @@ echo "Example:"$'\n'\
 
 echo "woc_headerbyhash - Retrieves the block header details of a given hash"
 echo "Example:"$'\n'\
-"woc_headerbyhash 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048"$'\n'
+"woc_headerbyhash 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048"$'\n'\
+"woc_headerbyhash 000000000556e364bb9bb45adf587734ed1becd48a8978ad700f8344cf72481c stn"$'\n'
 
 echo "woc_headers - Retrieves the last 10 block headers"
-echo "Example:"$'\n'"woc_headers"$'\n'
+echo "Example:"$'\n'"woc_headers"$'\n'"woc_headers test"$'\n'
 
 echo "woc_txhash - Retrieves the transaction details for a given transaction hash"
-echo "Example:"$'\n'"woc_txhash 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098"$'\n'
+echo "Example:"$'\n'"woc_txhash 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098"$'\n'\
+"woc_txhash 72c6c856d7a1cf34889be3aa13160d0ab2335236420e944099fefe180172f4aa stn"$'\n'
 
 echo "woc_broadcast - Broadcast a transaction"
 echo "Example:"$'\n'\
@@ -122,16 +124,18 @@ echo "woc_merkleproof - Returns the merkle branch for a confirmed transaction"
 echo "Example:"$'\n'"woc_merkleproof 294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa"$'\n'
 
 echo "woc_mempoolinfo - Retrieves various info about the node's mempool for the selected network"
-echo "Example:"$'\n'"woc_mempoolinfo"$'\n'
+echo "Example:"$'\n'"woc_mempoolinfo"$'\n'"woc_mempoolinfo test"$'\n'
 
 echo "woc_mempoolraw - Retrieve a list of transaction ids from the node's mempool for the selected network"
-echo "Example:"$'\n'"woc_mempoolraw"$'\n'
+echo "Example:"$'\n'"woc_mempoolraw"$'\n'"woc_mempoolraw test"$'\n'
 
 echo "woc_addressinfo - Retrieves various address info"
-echo "Example:"$'\n'"woc_addressinfo 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
+echo "Example:"$'\n'"woc_addressinfo 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'\
+"woc_addressinfo n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn"$'\n'
 
 echo "woc_addressbalance - Retrieves the confirmed and unconfirmed address balance"
-echo "Example:"$'\n'"woc_addressbalance 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
+echo "Example:"$'\n'"woc_addressbalance 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'\
+"woc_addressbalance n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn"$'\n'
 
 echo "woc_bulkbalance - Fetch confirmed and unconfirmed balance for multiple addresses in a single request (20 max)"
 echo "Example:"$'\n'\
@@ -139,10 +143,12 @@ echo "Example:"$'\n'\
 
 echo "woc_addresshistory - Retrieves confirmed and unconfirmed address transactions"
 echo "Example:"$'\n'\
-'woc_addresshistory 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX'$'\n'
+'woc_addresshistory 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX'$'\n'\
+"woc_addresshistory n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn"$'\n'
 
 echo "woc_unspent - Retrieves ordered list of UTXOs"
-echo "Example:"$'\n'"woc_unspent 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
+echo "Example:"$'\n'"woc_unspent 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'\
+"woc_unspent n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn"$'\n'
 
 echo "woc_bulkunspent - Fetch UTXOs for multiple addresses in a single request (20 max)"
 echo "Example:"$'\n'\
@@ -228,7 +234,10 @@ echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$ne
 woc_txhash(){
 if [[ -z "$1" ]]; then  echo "missing input"; return; fi
 net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
-echo $(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/hash/$1") | jq
+txHash=$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/hash/$1")
+echo "$txHash" | jq
+truncateCheck=$(echo "$txHash" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
+if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated. Use:"$'\n'"woc_rawtxout $1"$'\n'; return; fi
 }
 
 woc_broadcast(){
