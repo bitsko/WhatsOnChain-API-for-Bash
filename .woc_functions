@@ -62,7 +62,7 @@ echo "woc_help          Examples of use"
 
 woc_help(){
 echo "woc_info - Retrieves information about the state of the chain for the selected network"
-echo "Example:"$'\n'"woc_info"$'\n'
+echo "Examples:"$'\n'"woc_info"$'\n'$'\n'"woc_info test"$'\n'"woc_info stn"$'\n'
 
 echo "woc_circulatingsupply - Retrieves the circulating supply of BSV"
 echo "Example:"$'\n'"woc_circulatingsupply"$'\n'
@@ -75,7 +75,7 @@ echo "Example:"$'\n'\
 "woc_blockhash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"$'\n'
 
 echo "woc_height - Retrieves the block details of a given block height"
-echo "Example:"$'\n'"woc_height 0"$'\n'
+echo "Examples:"$'\n'"woc_height 0"$'\n'"woc_height 1 stn"$'\n'
 
 echo "woc_pages - Get pages of transactions from a block"
 echo "Example:"$'\n'\
