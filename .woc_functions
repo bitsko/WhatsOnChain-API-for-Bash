@@ -10,6 +10,9 @@
 #    . ~/.woc_functions
 #fi
 
+#after sourcing the functions, print the message below with"
+#woc
+
 woc(){
 echo "https://developers.whatsonchain.com/"
 curl -s -w "\n\n" "https://api.whatsonchain.com/v1/bsv/main/woc"
