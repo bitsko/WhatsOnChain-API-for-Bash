@@ -211,7 +211,11 @@ echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$ne
 woc_height(){
 if [[ -z "$1" ]]; then  echo "missing input"; return; fi
 net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/height/$1") | jq
+wocHeight=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/height/$1")
+echo "$wocHeight" | jq
+truncateCheck=$(echo "$wocHeight" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
+if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated."$'\n'; return; fi
+if [[ -z "$wocHeight" ]]; then echo "Block not found. Chain is $(woc_info | jq .blocks) blocks long"; return; fi
 }
 
 woc_pages(){
@@ -238,6 +242,7 @@ txHash=$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/
 echo "$txHash" | jq
 truncateCheck=$(echo "$txHash" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
 if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated. Use:"$'\n'"woc_rawtxout $1"$'\n'; return; fi
+if [[ -z "$txHash" ]]; then echo "Transaction hash not found. try:"$'\n'"woc_txhash $1 test"$'\n'"or"$'\n'"woc_txhash $1 stn"; return; fi
 }
 
 woc_broadcast(){
