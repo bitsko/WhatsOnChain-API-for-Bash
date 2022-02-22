@@ -60,7 +60,7 @@ echo "woc_getlinks              Identifies whether the posted query text is a bl
 echo "woc_help          Examples of use"
 }
 
-woc_help(){
+woc_helper(){
 echo "woc_info - Retrieves information about the state of the chain for the selected network"
 echo "Examples:"$'\n'"woc_info"$'\n'"woc_info test"$'\n'"woc_info stn"$'\n'
 
@@ -169,6 +169,10 @@ echo "Example:"$'\n'"woc_exchangerate"$'\n'
 
 echo "woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links"
 echo "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
+}
+
+woc_help(){
+woc_helper | less
 }
 
 woc_jqcheck(){
