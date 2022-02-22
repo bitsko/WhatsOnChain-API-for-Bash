@@ -60,7 +60,7 @@ echo "woc_getlinks - Identifies whether the posted query text is a block hash, t
 echo "woc_help - Examples of use"
 }
 
-woc_helper(){
+woc_help(){
 echo "woc_info - Retrieves information about the state of the chain for the selected network"
 echo "Examples:"$'\n'"woc_info"$'\n'"woc_info test"$'\n'"woc_info stn"$'\n'
 
@@ -171,8 +171,8 @@ echo "woc_getlinks - Identifies whether the posted query text is a block hash, t
 echo "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
 }
 
-woc_help(){
-woc_helper | less
+woc_helper(){
+woc_help | less
 }
 
 woc_jqcheck(){
