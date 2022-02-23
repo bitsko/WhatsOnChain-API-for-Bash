@@ -1,5 +1,5 @@
-# Whats-On-Chain-API-for-Bash
-Bash functions for the whats on chain api
+# WhatsOnChain API for Bash
+Bash functions for the WhatsOnChain API
 
 https://developers.whatsonchain.com/#introduction
 
