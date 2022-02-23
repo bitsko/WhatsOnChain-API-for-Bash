@@ -76,7 +76,7 @@ echo "woc_info - Retrieves information about the state of the chain for the sele
 "woc_height - Retrieves the block details of a given block height"$'\n'\
 "Examples:"$'\n'"woc_height 0"$'\n'"woc_height 1 stn"$'\n\n'\
 "woc_getblockcount - Retrieves the current block height"$'\n'\
-"Example:"$'\n'"woc_blockheight"$'\n\n'\
+"Example:"$'\n'"woc_getblockcount"$'\n\n'\
 "woc_currentblockinfo - Retrieves the block details of the current block height"$'\n'\
 "Example:"$'\n'"woc_currentblockinfo"$'\n\n'\
 "woc_pages - Get pages of transactions from a block"$'\n'\
