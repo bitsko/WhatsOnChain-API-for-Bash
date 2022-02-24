@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+#Bash functions for the WhatsOnChain API
 #Use at your own risk
+#https://developers.whatsonchain.com/#introduction
+
+#$ wget https://raw.githubusercontent.com/bitsko/Whats-On-Chain-API-for-Bash/main/.woc_functions
 
 #add these functions to your shell session by typing:
 #$ source .woc_functions
