@@ -158,35 +158,29 @@ echo "woc_info - Retrieves information about the state of the chain for the sele
 "woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links"$'\n'\
 "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
 }
-hashVar(){ if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
-        hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; exit 1; fi; fi
-}
-inputVar(){ if [[ -z "$1" ]]; then  echo "missing input"; return; fi
-}
-netVar1(){ net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
-}
-netVar2(){ net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
-}
-netVar3(){ net=main; if [[ "$3" == "test" ]]; then net=test; fi; if [[ "$3" == "stn" ]]; then net=stn; fi
-}
 woc_helper(){ woc_help | less
 }
 woc_jqcheck(){ jq --version
 command -v jq >/dev/null 2>&1 || { echo >&2 "please install jq"; exit 1; }
 }
-woc_info(){ netVar1
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info") | jq
+woc_info(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info")
 }
-woc_circulatingsupply(){ netVar1
+woc_circulatingsupply(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
 curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/circulatingsupply"
 }
-woc_tips(){ netVar1
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips") | jq
+woc_tips(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips")
 }
-woc_blockhash(){ netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$hash") | jq
+woc_blockhash(){
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$hash")
 }
-woc_height(){ netVar2
+woc_height(){
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
 if [[ -p "/dev/stdin" ]]; then height="$(cat)"; else
         height="$1"; if [[ -z "$1" ]]; then echo "provide a height as \$1 or pipe in a height"; exit 1; fi; fi
 wocHeight=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/height/$height")
@@ -195,7 +189,8 @@ truncateCheck=$(echo "$wocHeight" | jq | grep '"isTruncated": true' | awk '{ pri
 if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated."$'\n'; return; fi
 if [[ -z "$wocHeight" ]]; then echo "Block not found. Chain is $(woc_info | jq .blocks) blocks long"; return; fi
 }
-woc_getblockcount(){ netVar1
+woc_getblockcount(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
 woc_info | jq .blocks
 }
 woc_currentblockinfo(){
@@ -204,113 +199,163 @@ woc_height $(woc_getblockcount)
 woc_current100tx(){
 woc_currentblockinfo | jq .tx | sed 's/"//g;s/,//g;s/[[]//g;s/[]]//g;/^$/d;s/ //g'
 }
-woc_pages(){ inputVar; netVar3
-echo $(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1/page/$2") | jq
+woc_pages(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$3" == "test" ]]; then net=test; fi; if [[ "$3" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1/page/$2")
 }
-woc_headerbyhash(){ hashVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/$hash/header") | jq
+woc_headerbyhash(){
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
+hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/$hash/header")
 }
-woc_headers(){ netVar1
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/headers") | jq
+woc_headers(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/headers")
 }
-woc_txhash(){ hashVar; netVar2
+woc_txhash(){
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
+hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
 txHash=$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/hash/$hash")
-echo "$txHash" | jq
-truncateCheck=$(echo "$txHash" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
+jq<<<"$txHash"
+truncateCheck=$(jq<<<"$txHash" | grep '"isTruncated": true' | awk '{ print $2 }')
 if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated. Use:"$'\n'"woc_rawtxout $1"$'\n'; return; fi
 if [[ -z "$txHash" ]]; then echo "Transaction hash not found. try:"$'\n'"woc_txhash $1 test"$'\n'"or"$'\n'"woc_txhash $1 stn"; return; fi
 }
-woc_broadcast(){ inputVar; netVar2
+woc_broadcast(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
 curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/tx/raw" \
   --header "Content-Type: application/json" \
   --data "{\"txhex\": \"$1\" }"
 }
-woc_bulk(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs" \
+woc_bulk(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs" \
   --header "Content-Type: application/json" \
-  --data "{\"txids\" : ["$1"] }") | jq
+  --data "{\"txids\" : ["$1"] }")
 }
-woc_bulktxstatus(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs/status" \
+woc_bulktxstatus(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs/status" \
   --header "Content-Type: application/json" \
-  --data "{\"txids\" : ["$1" ] }") | jq
+  --data "{\"txids\" : ["$1" ] }")
 }
-woc_decode(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/tx/decode" \
+woc_decode(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/tx/decode" \
   --header "Content-Type: application/json" \
-  --data "{\"txhex\": \"$1\" }") | jq
+  --data "{\"txhex\": \"$1\" }")
 }
-woc_receipt(){ inputVar
+woc_receipt(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
 read -r -p "What do you want to name the receipt?"$'\n>' name
 curl -s --location --request GET  "https://main.whatsonchain.com/receipt/$1" > "$name".pdf
 }
-woc_hex(){ inputVar; netVar2
+woc_hex(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
 echo $(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$1/hex")
 }
-woc_bulkhex(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs/hex" \
+woc_bulkhex(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/txs/hex" \
   --header "Content-Type: application/json" \
-  --data "{\"txids\" : ["$1" ] }") | jq
+  --data "{\"txids\" : ["$1" ] }")
 }
-woc_rawtxout(){ hashVar; netVar3
+woc_rawtxout(){
+net=main; if [[ "$3" == "test" ]]; then net=test; fi; if [[ "$3" == "stn" ]]; then net=stn; fi
+if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
+hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
 voutCount=0; if [[ -n "$2" ]]; then voutCount="$2"; fi
 curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/out/$voutCount/hex"
 }
-woc_merkleproof(){ hashVar; netVar2
-echo $(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/proof") | jq
+woc_merkleproof(){
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
+hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
+jq<<<$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/proof")
 }
-woc_mempoolinfo(){ netVar1
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/info") | jq
+woc_mempoolinfo(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/info")
 }
-woc_mempoolraw(){ netVar1
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/raw") | jq
+woc_mempoolraw(){
+net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/raw")
 }
-woc_addressinfo(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/info") | jq
+woc_addressinfo(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/info")
 }
-woc_addressbalance(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/balance") | jq
+woc_addressbalance(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/balance")
 }
-woc_bulkbalance(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/addresses/balance" \
+woc_bulkbalance(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/addresses/balance" \
   --header "Content-Type: application/json" \
-  --data "{\"addresses\" : ["$1" ] }") | jq
+  --data "{\"addresses\" : ["$1" ] }")
 }
-woc_addresshistory(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/history") | jq
+woc_addresshistory(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/history")
 }
-woc_unspent(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/unspent") | jq
+woc_unspent(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/unspent")
 }
-woc_bulkunspent(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/addresses/unspent" \
+woc_bulkunspent(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/addresses/unspent" \
   --header "Content-Type: application/json" \
-  --data "{\"addresses\" : ["$1" ] }") | jq
+  --data "{\"addresses\" : ["$1" ] }")
 }
-woc_statement(){ inputVar
+woc_statement(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
 read -r -p "What do you want to name the statement?"$'\n>' name
 curl -s --location --request GET  "https://main.whatsonchain.com/statement/$1" > "$name".pdf
 }
-woc_scripthistory(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/history") | jq
+woc_scripthistory(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/history")
 }
-woc_scriptunspent(){ inputVar; netVar2
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/unspent") | jq
+woc_scriptunspent(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/unspent")
 }
-woc_bulkscriptunspent(){ inputVar; netVar2
-echo $(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/scripts/unspent" \
+woc_bulkscriptunspent(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
+jq<<<$(curl -s --location --request POST "https://api.whatsonchain.com/v1/bsv/$net/scripts/unspent" \
   --header "Content-Type: application/json" \
-  --data "{\"scripts\" : ["$1" ] }") | jq
+  --data "{\"scripts\" : ["$1" ] }")
 }
-woc_exchangerate(){ echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/main/exchangerate") | jq
+woc_exchangerate(){ jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/main/exchangerate")
 }
 woc_usd(){ currency=$(woc_exchangerate | jq .currency)
 rate=$(woc_exchangerate | jq .rate | cut -c -6)
 echo BSV is "$rate" "$currency". $(date) | sed 's/"//g'
 }
-woc_getlinks(){ inputVar
-links="curl -s -X POST https://api.whatsonchain.com/v1/bsv/main/search/links -H 'Content-Type: application/json' -d '{ \"query\": \"$1\" }' | jq"
-echo "$links" | bash
+woc_getlinks(){
+if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+links=jq<<<"$(curl -s -X POST https://api.whatsonchain.com/v1/bsv/main/search/links -H 'Content-Type: application/json' -d '{ \"query\": \"$1\" }')"
+bash<<<"$links"
 }
 woc_newrandtx(){ woc_current100tx | shuf -n 1
 }
