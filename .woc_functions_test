@@ -348,8 +348,7 @@ woc_usd(){
 }
 woc_getlinks(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
-        links=jq<<<"$(curl -s -X POST https://api.whatsonchain.com/v1/bsv/main/search/links -H \
-                'Content-Type: application/json' -d '{ \"query\": \"$1\" }')"
+        links=jq<<<"$(curl -s -X POST https://api.whatsonchain.com/v1/bsv/main/search/links -H 'Content-Type: application/json' -d '{ \"query\": \"$1\" }')"
         bash<<<"$links"
 }
 woc_getblockcount(){
