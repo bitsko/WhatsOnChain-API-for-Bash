@@ -181,13 +181,14 @@ woc_info(){
 
 woc_circulatingsupply(){
 net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
-curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/circulatingsupply"
+wocurl=$(curl -s -m 5 --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/circulatingsupply")
+if [ $? -ne 0 ]; then echo "connection failure"; else echo "$wocurl"; fi
 }
 
 woc_tips(){
 net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips") | jq
-
+wocurl=$(curl -s -m 5 --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips")
+if [ $? -ne 0 ]; then echo "connection failure"; else jq<<<"$wocurl"; fi
 }
 
 woc_blockhash(){
