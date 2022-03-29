@@ -170,8 +170,13 @@ command -v jq >/dev/null 2>&1 || { echo >&2 "please install jq"; exit 1; }
 }
 
 woc_info(){
-net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
-echo $(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info") | jq
+        net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
+        info=$(curl -s -m 5 --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info")
+        if [ $? -ne 0 ]; then
+                echo "connection failure"
+        else
+                jq<"$info"
+        fi
 }
 
 woc_circulatingsupply(){
