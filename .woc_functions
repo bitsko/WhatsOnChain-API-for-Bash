@@ -175,7 +175,7 @@ woc_info(){
         if [ $? -ne 0 ]; then
                 echo "connection failure"
         else
-                jq<"$info"
+                jq<<<"$info"
         fi
 }
 
