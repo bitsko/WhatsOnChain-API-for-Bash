@@ -204,6 +204,9 @@ wocHeight=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bs
 echo "$wocHeight" | jq
 truncateCheck=$(echo "$wocHeight" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
 if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated."$'\n'; return; fi
+txcount="$(jq .txcount<<<$wocHeight)"
+if [[ $(jq .tx<<<"$wocHeight" | wc -l) == 102 ]] && [[ "$txcount" != 100 ]]; then
+        echo "{\"tx_isTruncated\": \"true\"}"; return; fi
 if [[ -z "$wocHeight" ]]; then echo "Block not found. Chain is $(woc_info | jq .blocks) blocks long"; return; fi
 }
 
