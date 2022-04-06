@@ -178,6 +178,7 @@ woc_tips(){
         jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips")
 }
 woc_blockhash(){
+        if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
         jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1")
 }
