@@ -368,3 +368,17 @@ woc_current100tx(){
 woc_newrandtx(){
         woc_current100tx | shuf -n 1
 }
+woc_ratecalc() {
+if [[ -p "/dev/stdin" ]]; then
+        bsv_amount="$(cat)"
+else
+        bsv_amount="$1"
+        if [[ -z "$1" ]]; then
+                echo "provide a bsv amount as \$1"
+                exit 1
+        fi
+fi
+theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
+echo "$theRate * $bsv_amount" | bc
+}
+
