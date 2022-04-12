@@ -65,6 +65,9 @@ echo "woc_usd - Retrieves the USD price of BSV and posts the date"
 echo "woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links"
 echo "woc_help - Examples of use"
 echo "woc_newrandtx"
+echo "woc_current100tx"
+echo "woc_ratecalc"
+echo "woc_currentblockinfo"
 }
 woc_help(){
 echo "woc_info - Retrieves information about the state of the chain for the selected network"$'\n'\
@@ -381,4 +384,18 @@ fi
 theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
 echo "$theRate * $bsv_amount" | bc
 }
+woc_ratecalc() {
+if [[ -p "/dev/stdin" ]]; then
+        bsv_amount="$(cat)"
+else
+        bsv_amount="$1"
+        if [[ -z "$1" ]]; then
+                echo "provide a bsv amount as \$1"
+                exit 1
+        fi
+fi
+theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
+echo "$theRate * $bsv_amount" | bc
+}
+
 
