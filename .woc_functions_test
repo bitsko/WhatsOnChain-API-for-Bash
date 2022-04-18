@@ -254,11 +254,10 @@ woc_receipt(){ if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         read -r -p "What do you want to name the receipt?"$'\n>' name
         curl -s --location --request GET  "https://main.whatsonchain.com/receipt/$1" > "$name".pdf; }
 
-woc_hex(){
-        if [[ -z "$1" ]]; then  echo "missing input"; return; fi
+woc_hex(){ if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
+                hash="$1"; if [[ -z "$1" ]]; then echo "provide a txid as \$1 or pipe in a txid"; exit 1; fi; fi
         net=main; if [[ "$2" == "test" ]]; then net=test; fi; if [[ "$2" == "stn" ]]; then net=stn; fi
-        echo $(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$1/hex")
-}
+        curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/hex"; }
 
 woc_bulkhex(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
