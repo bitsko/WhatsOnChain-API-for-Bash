@@ -183,7 +183,7 @@ bsv_net_set_param_3(){
 }
 
 curl_GET(){
-        curl -s --location --request "https://api.whatsonchain.com/v1/bsv/${net}${1}"
+        curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/${net}${1}"
 }
 
 woc_helper(){
