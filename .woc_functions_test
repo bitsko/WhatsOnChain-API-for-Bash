@@ -14,8 +14,10 @@
 #    . ~/.woc_functions
 # fi
 
-# after sourcing the functions, print the message below with"
+# after sourcing the functions, print the listing of functions with:
 # $ woc
+# find examples of use with:
+# $ woc_help
 
 tput_coloring(){
 	[[ -z $(command -v tput) ]] && echo "requires tput" && return
@@ -280,6 +282,10 @@ curl_GET(){
         curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/${net}${1}"
 }
 
+jq_GET(){
+	jq<<<$(curl_GET ${1})
+}
+
 woc_helper(){
         woc_help | less
 }
@@ -296,7 +302,8 @@ woc_info(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/chain/info")
+        # jq<<<$(curl_GET "/chain/info")
+	jq_GET "/chain/info"
 }
 
 woc_circulatingsupply(){
