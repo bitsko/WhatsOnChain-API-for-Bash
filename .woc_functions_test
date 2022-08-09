@@ -302,7 +302,6 @@ woc_info(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/chain/info")
 	jq_GET "/chain/info"
 }
 
@@ -317,7 +316,6 @@ woc_tips(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/chain/tips")
 	jq_GET "/chain/tips"
 }
 
@@ -326,7 +324,6 @@ woc_blockhash(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/block/hash/$1")
 	jq_GET "/block/hash/$1"
 }
 
@@ -366,7 +363,6 @@ woc_pages(){
         net=main
         [[ "$3" == "test" ]] && net=test
         [[ "$3" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/block/hash/$1/page/$2")
 	jq_GET "/block/hash/$1/page/$2"
 }
 
@@ -380,15 +376,13 @@ woc_headerbyhash(){
         	hash="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-        # jq<<<$(curl_GET "/block/$hash/header")
 	jq_GET "/block/$hash/header"
 }
 
-woc_headers(){ 
+woc_headers(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/block/headers")
 	jq_GET "/block/headers"
 }
 
@@ -502,7 +496,6 @@ woc_merkleproof(){
                 hash="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-        # jq<<<$(curl_GET "/tx/$hash/proof")
 	jq_GET "/tx/$hash/proof"
 }
 
@@ -510,7 +503,6 @@ woc_mempoolinfo(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/mempool/info")
 	jq_GET "/mempool/info"
 }
 
@@ -518,7 +510,6 @@ woc_mempoolraw(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/mempool/raw")
 	jq_GET "/mempool/raw"
 }
 
@@ -535,7 +526,6 @@ woc_addressinfo(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/address/$bsv_address/info")
 	jq_GET "/address/$bsv_address/info"
 }
 
@@ -544,7 +534,6 @@ woc_addressbalance(){
 	net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/address/$1/balance")
 	jq_GET "/address/$1/balance"
 }
 
@@ -563,7 +552,6 @@ woc_addresshistory(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/address/$1/history")
 	jq_GET "/address/$1/history"
 }
 
@@ -572,7 +560,6 @@ woc_unspent(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/address/$1/unspent")
 	jq_GET "/address/$1/unspent"
 }
 
@@ -597,7 +584,6 @@ woc_scripthistory(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/script/$1/history")
 	jq_GET "/script/$1/history"
 }
 
@@ -606,7 +592,6 @@ woc_scriptunspent(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        # jq<<<$(curl_GET "/script/$1/unspent")
 	jq_GET "/script/$1/unspent"
 }
 
