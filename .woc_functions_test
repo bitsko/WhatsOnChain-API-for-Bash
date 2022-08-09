@@ -17,11 +17,23 @@
 # after sourcing the functions, print the message below with"
 # $ woc
 
+tput_coloring(){
+	[[ -z $(command -v tput) ]] && echo "requires tput" && return
+	red_text=$(tput setaf 1)
+	wht_text=$(tput setaf 7)
+	blu_text=$(tput setaf 4)
+	reg_text=$(tput sgr0)
+	grn_text=$(tput setaf 2)
+	bld_text=$(tput bold)
+	ylw_text=$(tput setaf 3)
+}
+tput_coloring
+
 woc(){
 cat << WHATSONCHAINFORBASH
-https://developers.whatsonchain.com/
-Whats On Chain
-
+${grn_text}https://developers.whatsonchain.com/
+${blu_text}Whats On Chain${reg_text}
+${blu_text}${bld_text}
       #####         #####  ,,,,,,,,,,,,,,,   #################
     ######          ######  ,,,,,,,,,,,,,  #####################
    #####              ##### ,,,,,,,,,,,,, #######################
@@ -32,234 +44,234 @@ Whats On Chain
     ################# ,,,,,,,,,,,,,,,,,,,,,,,,,, ################
      #################  ,,,,,,,,,,,,,,,,,,,,,,, ################
        #################  ,,,,,,,,,,,,,,,,,,,  ###############
-
-woc_info - Retrieves information about the state of the chain for the selected network
-woc_circulatingsupply - Retrieves the circulating supply of BSV
-woc_tips - Retrieves information about all known tips in the block tree
-woc_blockhash - Retrieves the block details of a given hash
-woc_height - Retrieves the block details of a given block height
-woc_getblockcount - Posts the current block number
-woc_currentblockinfo - Retrieves the block details of the current block
-woc_pages - Get pages of transactions from a block
-woc_headerbyhash - Retrieves the block header details of a given hash
-woc_headers - Retrieves the last 10 block headers
-woc_txhash - Retrieves the transaction details for a given transaction hash
-woc_broadcast - Broadcast a transaction
-woc_bulk - Fetch details for multiple transactions in single request (20 max)
-woc_bulktxstatus - Get multiple transactions status in a single request (20 max)
-woc_decode - Decode raw transaction with json in response or error msg from node
-woc_receipt - Download transaction receipt (PDF)
-woc_hex - Returns raw hex for the transaction with given hash
-woc_bulkhex - Get multiple transactions raw data in hex in a single request (20 max)
-woc_merkleproof - Returns the merkle branch for a confirmed transaction
-woc_mempoolinfo - Retrieves various info about the node's mempool for the selected network
-woc_mempoolraw - Retrieve a list of transaction ids from the node's mempool for the selected network
-woc_addressinfo - Retrieves various address info
-woc_addressbalance - Retrieves the confirmed and unconfirmed address balance
-woc_bulkbalance - Fetch confirmed and unconfirmed balance for multiple addresses in a single request (20 max)
-woc_addresshistory - Retrieves confirmed and unconfirmed address transactions
-woc_unspent - Retrieves ordered list of UTXOs
-woc_bulkunspent - Fetch UTXOs for multiple addresses in a single request (20 max)
-woc_statement - Download address statement (PDF)
-woc_scripthistory - Retrieves confirmed and unconfirmed script transactions
-woc_scriptunspent - This endpoint retrieves ordered list of UTXOs
-woc_bulkscriptunspent - Fetch UTXOs for multiple scripts in a single request (20 max)
-woc_exchangerate - This endpoint provides exchange rate for BSV
-woc_usd - Retrieves the USD price of BSV and posts the date
-woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links
-woc_help - Examples of use
-woc_newrandtx
-woc_current100tx
-woc_ratecalc
-woc_currentblockinfo
+${reg_text}
+${bld_text}woc_info${reg_text} - Retrieves information about the state of the chain for the selected network
+${bld_text}woc_circulatingsupply${reg_text} - Retrieves the circulating supply of BSV
+${bld_text}woc_tips${reg_text} - Retrieves information about all known tips in the block tree
+${bld_text}woc_blockhash${reg_text} - Retrieves the block details of a given hash
+${bld_text}woc_height${reg_text} - Retrieves the block details of a given block height
+${bld_text}woc_getblockcount${reg_text} - Posts the current block number
+${bld_text}woc_currentblockinfo${reg_text} - Retrieves the block details of the current block
+${bld_text}woc_pages${reg_text} - Get pages of transactions from a block
+${bld_text}woc_headerbyhash${reg_text} - Retrieves the block header details of a given hash
+${bld_text}woc_headers${reg_text} - Retrieves the last 10 block headers
+${bld_text}woc_txhash${reg_text} - Retrieves the transaction details for a given transaction hash
+${bld_text}woc_broadcast${reg_text} - Broadcast a transaction
+${bld_text}woc_bulk${reg_text} - Fetch details for multiple transactions in single request (20 max)
+${bld_text}woc_bulktxstatus${reg_text} - Get multiple transactions status in a single request (20 max)
+${bld_text}woc_decode${reg_text} - Decode raw transaction with json in response or error msg from node
+${bld_text}woc_receipt${reg_text} - Download transaction receipt (PDF)
+${bld_text}woc_hex${reg_text} - Returns raw hex for the transaction with given hash
+${bld_text}woc_bulkhex${reg_text} - Get multiple transactions raw data in hex in a single request (20 max)
+${bld_text}woc_merkleproof${reg_text} - Returns the merkle branch for a confirmed transaction
+${bld_text}woc_mempoolinfo${reg_text} - Retrieves various info about the node's mempool for the selected network
+${bld_text}woc_mempoolraw${reg_text} - Retrieve a list of transaction ids from the node's mempool for the selected network
+${bld_text}woc_addressinfo${reg_text} - Retrieves various address info
+${bld_text}woc_addressbalance${reg_text} - Retrieves the confirmed and unconfirmed address balance
+${bld_text}woc_bulkbalance${reg_text} - Fetch confirmed and unconfirmed balance for multiple addresses in a single request (20 max)
+${bld_text}woc_addresshistory${reg_text} - Retrieves confirmed and unconfirmed address transactions
+${bld_text}woc_unspent${reg_text} - Retrieves ordered list of UTXOs
+${bld_text}woc_bulkunspent${reg_text} - Fetch UTXOs for multiple addresses in a single request (20 max)
+${bld_text}woc_statement${reg_text} - Download address statement (PDF)
+${bld_text}woc_scripthistory${reg_text} - Retrieves confirmed and unconfirmed script transactions
+${bld_text}woc_scriptunspent${reg_text} - This endpoint retrieves ordered list of UTXOs
+${bld_text}woc_bulkscriptunspent${reg_text} - Fetch UTXOs for multiple scripts in a single request (20 max)
+${bld_text}woc_exchangerate${reg_text} - This endpoint provides exchange rate for BSV
+${bld_text}woc_usd${reg_text} - Retrieves the USD price of BSV and posts the date
+${bld_text}woc_getlinks${reg_text} - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links
+${bld_text}woc_help${reg_text} - Examples of use
+${bld_text}woc_newrandtx${reg_text}
+${bld_text}woc_current100tx${reg_text}
+${bld_text}woc_ratecalc${reg_text}
+${bld_text}woc_currentblockinfo${reg_text}
 WHATSONCHAINFORBASH
 }
 
 woc_help(){
 cat << WOCHELP
 ### WHATS ON CHAIN FOR BASH HELP DOC ###
-woc_info - Retrieves information about the state of the chain for the selected network
+${bld_text}woc_info - Retrieves information about the state of the chain for the selected network
 
-Examples:
-woc_info
+${grn_text}Examples:
+${ylw_text}woc_info
 woc_info test
 woc_info stn
+${reg_text}
+${bld_text}woc_circulatingsupply - Retrieves the circulating supply of BSV
 
-woc_circulatingsupply - Retrieves the circulating supply of BSV
+${grn_text}Example:
+${ylw_text}woc_circulatingsupply
+${reg_text}
+${bld_text}woc_tips - Retrieves information about all known tips in the block tree
 
-Example:
-woc_circulatingsupply
-
-woc_tips - Retrieves information about all known tips in the block tree
-
-Example:
-woc_tips
+${grn_text}Example:
+${ylw_text}woc_tips
 woc_tips stn
+${reg_text}
+${bld_text}woc_blockhash - Retrieves the block details of a given hash
 
-woc_blockhash - Retrieves the block details of a given hash
+${grn_text}Example:
+${ylw_text}woc_blockhash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+${reg_text}
+${bld_text}woc_height - Retrieves the block details of a given block height
 
-Example:
-woc_blockhash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
-
-woc_height - Retrieves the block details of a given block height
-
-Examples:
-woc_height 0
+${grn_text}Examples:
+${ylw_text}woc_height 0
 woc_height 1 stn
+${reg_text}
+${bld_text}woc_getblockcount - Retrieves the current block height
 
-woc_getblockcount - Retrieves the current block height
+${grn_text}Example:
+${ylw_text}woc_getblockcount
+${reg_text}
+${bld_text}woc_currentblockinfo - Retrieves the block details of the current block height
 
-Example:
-woc_getblockcount
+${grn_text}Example:
+${ylw_text}woc_currentblockinfo
+${reg_text}
+${bld_text}woc_pages - Get pages of transactions from a block
 
-woc_currentblockinfo - Retrieves the block details of the current block height
+${grn_text}Example:
+${ylw_text}woc_pages 000000000000000000885a4d8e9912f085b42288adc58b3ee5830a7da9f4fef4 2
+${reg_text}
+${bld_text}woc_headerbyhash - Retrieves the block header details of a given hash
 
-Example:
-woc_currentblockinfo
-
-woc_pages - Get pages of transactions from a block
-
-Example:
-woc_pages 000000000000000000885a4d8e9912f085b42288adc58b3ee5830a7da9f4fef4 2
-
-woc_headerbyhash - Retrieves the block header details of a given hash
-
-Example:
-woc_headerbyhash 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048
+${grn_text}Example:
+${ylw_text}woc_headerbyhash 00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048
 woc_headerbyhash 000000000556e364bb9bb45adf587734ed1becd48a8978ad700f8344cf72481c stn
+${reg_text}
+${bld_text}woc_headers - Retrieves the last 10 block headers
 
-woc_headers - Retrieves the last 10 block headers
-
-Example:
-woc_headers
+${grn_text}Example:
+${ylw_text}woc_headers
 woc_headers test
+${reg_text}
+${bld_text}woc_txhash - Retrieves the transaction details for a given transaction hash
 
-woc_txhash - Retrieves the transaction details for a given transaction hash
-
-Example:
-woc_txhash 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098
+${grn_text}Example:
+${ylw_text}woc_txhash 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098
 woc_txhash 72c6c856d7a1cf34889be3aa13160d0ab2335236420e944099fefe180172f4aa stn
+${reg_text}
+${bld_text}woc_broadcast - Broadcast a transaction
 
-woc_broadcast - Broadcast a transaction
+${grn_text}Example:
+${ylw_text}woc_broadcast 0100000001484d40d45b9ea0d652fca8258ab7caa42541eb52975857f96fb50cd732c8b481000000008a47304402202cb265bf10707bf49346c3515dd3d16fc454618c58ec0a0ff448a676c54ff71302206c6624d762a1fcef4618284ead8f08678ac05b13c84235f1654e6ad168233e8201410414e301b2328f17442c0b8310d787bf3d8a404cfbd0704f135b6ad4b2d3ee751310f981926e53a6e8c39bd7d3fefd576c543cce493cbac06388f2651d1aacbfcdffffffff0162640100000000001976a914c8e90996c7c6080ee06284600c684ed904d14c5c88ac00000000
+${reg_text}
+${bld_text}woc_bulk - Fetch details for multiple transactions in single request (20 max)
 
-Example:
-woc_broadcast 0100000001484d40d45b9ea0d652fca8258ab7caa42541eb52975857f96fb50cd732c8b481000000008a47304402202cb265bf10707bf49346c3515dd3d16fc454618c58ec0a0ff448a676c54ff71302206c6624d762a1fcef4618284ead8f08678ac05b13c84235f1654e6ad168233e8201410414e301b2328f17442c0b8310d787bf3d8a404cfbd0704f135b6ad4b2d3ee751310f981926e53a6e8c39bd7d3fefd576c543cce493cbac06388f2651d1aacbfcdffffffff0162640100000000001976a914c8e90996c7c6080ee06284600c684ed904d14c5c88ac00000000
+${grn_text}Example:
+${ylw_text}woc_bulk \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
+${reg_text}
+${bld_text}woc_bulktxstatus - Get multiple transactions status in a single request (20 max)
 
-woc_bulk - Fetch details for multiple transactions in single request (20 max)
+${grn_text}Example:
+${ylw_text}woc_bulktxstatus \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
+${reg_text}
+${bld_text}woc_decode - Decode raw transaction with json in response or error msg from node
 
-Example:
-woc_bulk \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
+${grn_text}Example:
+${ylw_text}woc_decode 0100000001484d40d45b9ea0d652fca8258ab7caa42541eb52975857f96fb50cd732c8b481000000008a47304402202cb265bf10707bf49346c3515dd3d16fc454618c58ec0a0ff448a676c54ff71302206c6624d762a1fcef4618284ead8f08678ac05b13c84235f1654e6ad168233e8201410414e301b2328f17442c0b8310d787bf3d8a404cfbd0704f135b6ad4b2d3ee751310f981926e53a6e8c39bd7d3fefd576c543cce493cbac06388f2651d1aacbfcdffffffff0162640100000000001976a914c8e90996c7c6080ee06284600c684ed904d14c5c88ac00000000
+${reg_text}
+${bld_text}woc_receipt - Download transaction receipt (PDF)
 
-woc_bulktxstatus - Get multiple transactions status in a single request (20 max)
+${grn_text}Example:
+${ylw_text}woc_receipt 3c7478a74b180cb4784e86d33d40b48968898ee15851dd133e46e04038c9b963
+${reg_text}
+${bld_text}woc_hex - Returns raw hex for the transaction with given hash
 
-Example:
-woc_bulktxstatus \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
+${grn_text}Example:
+${ylw_text}woc_hex 294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa
+${reg_text}
+${bld_text}woc_bulkhex - Get multiple transactions raw data in hex in a single request (20 max)
 
-woc_decode - Decode raw transaction with json in response or error msg from node
+${grn_text}Example:
+${ylw_text}woc_bulkhex \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
+${reg_text}
+${bld_text}woc_merkleproof - Returns the merkle branch for a confirmed transaction
 
-Example:
-woc_decode 0100000001484d40d45b9ea0d652fca8258ab7caa42541eb52975857f96fb50cd732c8b481000000008a47304402202cb265bf10707bf49346c3515dd3d16fc454618c58ec0a0ff448a676c54ff71302206c6624d762a1fcef4618284ead8f08678ac05b13c84235f1654e6ad168233e8201410414e301b2328f17442c0b8310d787bf3d8a404cfbd0704f135b6ad4b2d3ee751310f981926e53a6e8c39bd7d3fefd576c543cce493cbac06388f2651d1aacbfcdffffffff0162640100000000001976a914c8e90996c7c6080ee06284600c684ed904d14c5c88ac00000000
+${grn_text}Example:
+${ylw_text}woc_merkleproof 294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa
+${reg_text}
+${bld_text}woc_mempoolinfo - Retrieves various info about the node's mempool for the selected network
 
-woc_receipt - Download transaction receipt (PDF)
-
-Example:
-woc_receipt 3c7478a74b180cb4784e86d33d40b48968898ee15851dd133e46e04038c9b963
-
-woc_hex - Returns raw hex for the transaction with given hash
-
-Example:
-woc_hex 294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa
-
-woc_bulkhex - Get multiple transactions raw data in hex in a single request (20 max)
-
-Example:
-woc_bulkhex \"294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa\",\"91f68c2c598bc73812dd32d60ab67005eac498bef5f0c45b822b3c9468ba3258\"
-
-woc_merkleproof - Returns the merkle branch for a confirmed transaction
-
-Example:
-woc_merkleproof 294cd1ebd5689fdee03509f92c32184c0f52f037d4046af250229b97e0c8f1aa
-
-woc_mempoolinfo - Retrieves various info about the node's mempool for the selected network
-
-Example:
-woc_mempoolinfo
+${grn_text}Example:
+${ylw_text}woc_mempoolinfo
 woc_mempoolinfo test
+${reg_text}
+${bld_text}woc_mempoolraw - Retrieve a list of transaction ids from the node's mempool for the selected network
 
-woc_mempoolraw - Retrieve a list of transaction ids from the node's mempool for the selected network
-
-Example:
-woc_mempoolraw
+${grn_text}Example:
+${ylw_text}woc_mempoolraw
 woc_mempoolraw test
+${reg_text}
+${bld_text}woc_addressinfo - Retrieves various address info
 
-woc_addressinfo - Retrieves various address info
-
-Example:
-woc_addressinfo 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+${grn_text}Example:
+${ylw_text}woc_addressinfo 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
 woc_addressinfo n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn
+${reg_text}
+${bld_text}woc_addressbalance - Retrieves the confirmed and unconfirmed address balance
 
-woc_addressbalance - Retrieves the confirmed and unconfirmed address balance
-
-Example:
-woc_addressbalance 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+${grn_text}Example:
+${ylw_text}woc_addressbalance 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
 woc_addressbalance n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn
+${reg_text}
+${bld_text}woc_bulkbalance - Fetch confirmed and unconfirmed balance for multiple addresses in a single request (20 max)
 
-woc_bulkbalance - Fetch confirmed and unconfirmed balance for multiple addresses in a single request (20 max)
+${grn_text}Example:
+${ylw_text}woc_bulkbalance \"12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX\",\"1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1\"
+${reg_text}
+${bld_text}woc_addresshistory - Retrieves confirmed and unconfirmed address transactions
 
-Example:
-woc_bulkbalance \"12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX\",\"1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1\"
-
-woc_addresshistory - Retrieves confirmed and unconfirmed address transactions
-
-Example:
-woc_addresshistory 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX
+${grn_text}Example:
+${ylw_text}woc_addresshistory 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX
 woc_addresshistory n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn
+${reg_text}
+${bld_text}woc_unspent - Retrieves ordered list of UTXOs
 
-woc_unspent - Retrieves ordered list of UTXOs
-
-Example:
-woc_unspent 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+${grn_text}Example:
+${ylw_text}woc_unspent 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
 woc_unspent n4ioKcJWq8LwxMCyUGSyk8H8MMrMKVCKmK stn
+${reg_text}
+${bld_text}woc_bulkunspent - Fetch UTXOs for multiple addresses in a single request (20 max)
 
-woc_bulkunspent - Fetch UTXOs for multiple addresses in a single request (20 max)
+${grn_text}Example:
+${ylw_text}woc_bulkunspent \"12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX\",\"1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1\"
+${reg_text}
+${bld_text}woc_statement - Download address statement (PDF)
 
-Example:
-woc_bulkunspent \"12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX\",\"1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1\"
+${grn_text}Example:
+${ylw_text}woc_statement 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX
+${reg_text}
+${bld_text}woc_scripthistory - Retrieves confirmed and unconfirmed script transactions
 
-woc_statement - Download address statement (PDF)
+${grn_text}Example:
+${ylw_text}woc_scripthistory f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7
+${reg_text}
+${bld_text}woc_scriptunspent - This endpoint retrieves ordered list of UTXOs
 
-Example:
-woc_statement 12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX
+${grn_text}Example:
+${ylw_text}woc_scriptunspent f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7
+${reg_text}
+${bld_text}woc_bulkscriptunspent - Fetch UTXOs for multiple scripts in a single request (20 max)
 
-woc_scripthistory - Retrieves confirmed and unconfirmed script transactions
+${grn_text}Example:
+${ylw_text}woc_bulkscriptunspent \"f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7\",\"995ea8d0f752f41cdd99bb9d54cb004709e04c7dc4088bcbbbb9ea5c390a43c3\"
+${reg_text}
+${bld_text}woc_exchangerate - This endpoint provides exchange rate for BSV
 
-Example:
-woc_scripthistory f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7
+${grn_text}Example:
+${ylw_text}woc_exchangerate
+${reg_text}
+${bld_text}woc_usd - Retrieves the USD price of BSV and posts the date
 
-woc_scriptunspent - This endpoint retrieves ordered list of UTXOs
+${grn_text}Example:
+${ylw_text}woc_usd
+${reg_text}
+${bld_text}woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links
 
-Example:
-woc_scriptunspent f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7
-
-woc_bulkscriptunspent - Fetch UTXOs for multiple scripts in a single request (20 max)
-
-Example:
-woc_bulkscriptunspent \"f814a7c3a40164aacc440871e8b7b14eb6a45f0ca7dcbeaea709edc83274c5e7\",\"995ea8d0f752f41cdd99bb9d54cb004709e04c7dc4088bcbbbb9ea5c390a43c3\"
-
-woc_exchangerate - This endpoint provides exchange rate for BSV
-
-Example:
-woc_exchangerate
-
-woc_usd - Retrieves the USD price of BSV and posts the date
-
-Example:
-woc_usd 
-
-woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links
-
-Example:
-woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+${grn_text}Example:
+${ylw_text}woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa${reg_text}
 WOCHELP
 }
 ##############################################################################################################################
