@@ -163,23 +163,27 @@ echo "woc_info - Retrieves information about the state of the chain for the sele
 "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
 }
 ##############################################################################################################################
+param_1="$1"
+param_2="$2"
+param_3="$3"
+
 bsv_net_set_param_1(){
         net=main
-        [[ "$1" == "test" ]] && net=test
-        [[ "$1" == "stn" ]] && net=stn
+        [[ "$param_1" == "test" ]] && net=test
+        [[ "$param_1" == "stn" ]] && net=stn
 }
 
 
 bsv_net_set_param_2(){
         net=main
-        [[ "$2" == "test" ]] && net=test
-        [[ "$2" == "stn" ]] && net=stn
+        [[ "$param_2" == "test" ]] && net=test
+        [[ "$param_2" == "stn" ]] && net=stn
 }
 
 bsv_net_set_param_3(){
         net=main
-        [[ "$3" == "test" ]] && net=test
-        [[ "$3" == "stn" ]] && net=stn
+        [[ "$param_3" == "test" ]] && net=test
+        [[ "$param_3" == "stn" ]] && net=stn
 }
 
 curl_GET(){
@@ -198,13 +202,14 @@ woc_jqcheck(){
 }
 
 input_check(){
-	if [[ -z "$1" ]]; then
+	if [[ -z "$param_1" ]]; then
 		echo "missing input!"
 		return
 	fi
 }
+
 hash_check(){
-        hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi
+        hash="$param_1"; if [[ -z "$param_1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi
 }
 
 #########################################
