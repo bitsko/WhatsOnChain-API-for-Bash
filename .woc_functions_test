@@ -162,7 +162,7 @@ echo "woc_info - Retrieves information about the state of the chain for the sele
 "woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links"$'\n'\
 "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
 }
-
+########################################
 bsv_net_set_param_1(){
         net=main
         [[ "$1" == "test" ]] && net=test
@@ -176,6 +176,15 @@ bsv_net_set_param_2(){
         [[ "$2" == "stn" ]] && net=stn
 }
 
+bsv_net_set_param_3(){
+        net=main
+        [[ "$3" == "test" ]] && net=test
+        [[ "$3" == "stn" ]] && net=stn
+}
+curl_GET(){
+        curl -s --location --request GET ${1}
+}
+#########################################
 woc_helper(){
         woc_help | less
 }
@@ -186,29 +195,29 @@ woc_jqcheck(){
                 exit 1
         }
 }
-
+#########################################
 woc_info(){
         bsv_net_set_param_1
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/chain/info"); }
 
 woc_circulatingsupply(){ 
         bsv_net_set_param_1
-        curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/circulatingsupply"; }
+        curl_GET "https://api.whatsonchain.com/v1/bsv/$net/circulatingsupply"; }
 
 woc_tips(){ 
         bsv_net_set_param_1
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/chain/tips"); }
         
 woc_blockhash(){ 
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1"); }
 
 woc_height(){
         bsv_net_set_param_2
         if [[ -p "/dev/stdin" ]]; then height="$(cat)"; else
                 height="$1"; if [[ -z "$1" ]]; then echo "provide a height as \$1 or pipe in a height"; exit 1; fi; fi
-        wocHeight=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/height/$height")
+        wocHeight=$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/block/height/$height")
         echo "$wocHeight" | jq
         truncateCheck=$(echo "$wocHeight" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
         if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated."$'\n'; return; fi
@@ -221,24 +230,24 @@ woc_height(){
 woc_pages(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_3
-        jq<<<$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1/page/$2")
+        jq<<<$(curl_GET  "https://api.whatsonchain.com/v1/bsv/$net/block/hash/$1/page/$2")
 }
 
 woc_headerbyhash(){
         bsv_net_set_param_2
         if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
         hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/$hash/header"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/block/$hash/header"); }
 
 woc_headers(){ 
         bsv_net_set_param_1
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/block/headers"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/block/headers"); }
 
 woc_txhash(){
         bsv_net_set_param_2
         if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
         hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
-        txHash=$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/hash/$hash")
+        txHash=$(curl_GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/hash/$hash")
         jq<<<"$txHash"
         truncateCheck=$(jq<<<"$txHash" | grep '"isTruncated": true' | awk '{ print $2 }')
         if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated. Use:"$'\n'"woc_rawtxout $1"$'\n'; return; fi
@@ -279,12 +288,12 @@ woc_decode(){
 
 woc_receipt(){ if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         read -r -p "What do you want to name the receipt?"$'\n>' name
-        curl -s --location --request GET  "https://main.whatsonchain.com/receipt/$1" > "$name".pdf; }
+        curl_GET  "https://main.whatsonchain.com/receipt/$1" > "$name".pdf; }
 
 woc_hex(){ if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
                 hash="$1"; if [[ -z "$1" ]]; then echo "provide a txid as \$1 or pipe in a txid"; exit 1; fi; fi
         bsv_net_set_param_2
-        curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/hex"; }
+        curl_GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/hex"; }
 
 woc_bulkhex(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
@@ -299,32 +308,32 @@ woc_rawtxout(){
         if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
         hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
         voutCount=0; if [[ -n "$2" ]]; then voutCount="$2"; fi
-        curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/out/$voutCount/hex"
+        curl_GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/out/$voutCount/hex"
 }
 
 woc_merkleproof(){
         bsv_net_set_param_2
         if [[ -p "/dev/stdin" ]]; then hash="$(cat)"; else
         hash="$1"; if [[ -z "$1" ]]; then echo "provide a hash as \$1 or pipe in a hash"; return; fi; fi
-        jq<<<$(curl -s --location --request GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/proof")
+        jq<<<$(curl_GET  "https://api.whatsonchain.com/v1/bsv/$net/tx/$hash/proof")
 }
 
 woc_mempoolinfo(){
         bsv_net_set_param_1
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/info"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/info"); }
 
 woc_mempoolraw(){ net=main; if [[ "$1" == "test" ]]; then net=test; fi; if [[ "$1" == "stn" ]]; then net=stn; fi
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/raw"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/mempool/raw"); }
 
 woc_addressinfo(){ if [[ -p "/dev/stdin" ]]; then bsv_address="$(cat)"; else bsv_address="$1"
         if [[ -z "$1" ]]; then echo "provide an address as \$1"; return; fi; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$bsv_address/info"); }
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/address/$bsv_address/info"); }
 
 woc_addressbalance(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/balance")
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/balance")
 }
 
 woc_bulkbalance(){
@@ -338,13 +347,13 @@ woc_bulkbalance(){
 woc_addresshistory(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/history")
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/history")
 }
 
 woc_unspent(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/unspent")
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/address/$1/unspent")
 }
 
 woc_bulkunspent(){
@@ -358,19 +367,19 @@ woc_bulkunspent(){
 woc_statement(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         read -r -p "What do you want to name the statement?"$'\n>' name
-        curl -s --location --request GET  "https://main.whatsonchain.com/statement/$1" > "$name".pdf
+        curl_GET  "https://main.whatsonchain.com/statement/$1" > "$name".pdf
 }
 
 woc_scripthistory(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/history")
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/history")
 }
 
 woc_scriptunspent(){
         if [[ -z "$1" ]]; then  echo "missing input"; return; fi
         bsv_net_set_param_2
-        jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/unspent")
+        jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/$net/script/$1/unspent")
 }
 
 woc_bulkscriptunspent(){
@@ -381,7 +390,7 @@ woc_bulkscriptunspent(){
                 --data "{\"scripts\" : ["$1" ] }")
 }
 
-woc_exchangerate(){ jq<<<$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/main/exchangerate"); }
+woc_exchangerate(){ jq<<<$(curl_GET "https://api.whatsonchain.com/v1/bsv/main/exchangerate"); }
 
 woc_usd(){ currency=$(woc_exchangerate | jq .currency)
         rate=$(woc_exchangerate | jq .rate | cut -c -6)
@@ -418,5 +427,3 @@ woc_ratecalc() {
         theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
         echo "$theRate * $bsv_amount" | bc
 }
-
-
