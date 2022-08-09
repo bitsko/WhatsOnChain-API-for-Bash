@@ -162,7 +162,7 @@ echo "woc_info - Retrieves information about the state of the chain for the sele
 "woc_getlinks - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links"$'\n'\
 "Example:"$'\n'"woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"$'\n'
 }
-########################################
+##############################################################################################################################
 bsv_net_set_param_1(){
         net=main
         [[ "$1" == "test" ]] && net=test
@@ -182,13 +182,10 @@ bsv_net_set_param_3(){
         [[ "$3" == "stn" ]] && net=stn
 }
 
-woc_url(){
-}
 curl_GET(){
         curl -s --location --request "https://api.whatsonchain.com/v1/bsv/${net}${1}"
-
 }
-#########################################
+
 woc_helper(){
         woc_help | less
 }
