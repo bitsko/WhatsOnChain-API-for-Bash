@@ -296,26 +296,30 @@ woc_info(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/chain/info"); }
+        jq<<<$(curl_GET "/chain/info")
+}
 
 woc_circulatingsupply(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        curl_GET "/circulatingsupply"; }
+        curl_GET "/circulatingsupply"
+}
 
 woc_tips(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/chain/tips"); }
+        jq<<<$(curl_GET "/chain/tips")
+}
 
 woc_blockhash(){
 	[[ -z "$1" ]] && echo "missing input!" && return
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/block/hash/$1"); }
+        jq<<<$(curl_GET "/block/hash/$1")
+}
 
 woc_height(){
         net=main
@@ -352,13 +356,15 @@ woc_headerbyhash(){
         	hash="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-        jq<<<$(curl_GET "/block/$hash/header"); }
+        jq<<<$(curl_GET "/block/$hash/header")
+}
 
 woc_headers(){ 
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/block/headers"); }
+        jq<<<$(curl_GET "/block/headers")
+}
 
 woc_txhash(){
         net=main
@@ -477,13 +483,15 @@ woc_mempoolinfo(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/mempool/info"); }
+        jq<<<$(curl_GET "/mempool/info")
+}
 
 woc_mempoolraw(){
         net=main
         [[ "$1" == "test" ]] && net=test
         [[ "$1" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/mempool/raw"); }
+        jq<<<$(curl_GET "/mempool/raw")
+}
 
 woc_addressinfo(){
         if [[ -p "/dev/stdin" ]]; then
@@ -498,7 +506,8 @@ woc_addressinfo(){
         net=main
         [[ "$2" == "test" ]] && net=test
         [[ "$2" == "stn" ]] && net=stn
-        jq<<<$(curl_GET "/address/$bsv_address/info"); }
+        jq<<<$(curl_GET "/address/$bsv_address/info")
+}
 
 woc_addressbalance(){
 	[[ -z "$1" ]] && echo "missing input!" && return
@@ -592,7 +601,8 @@ woc_getlinks(){
         curl_address2=" -H 'Content-Type: application/json' -d '{ \"query\": \"$1\" }'"
         curl_address_="${curl_address1}${curl_address2}"
         links=jq<<<"$(curl -s -X POST ${curl_address_})"
-        bash<<<"$links"; }
+        bash<<<"$links"
+}
 
 woc_getblockcount(){
         net=main
