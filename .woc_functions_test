@@ -175,7 +175,7 @@ woc_helper(){
 woc_jqcheck(){
         jq --version
         command -v jq >/dev/null 2>&1 || { echo >&2 "please install jq"
-                exit 1
+                return
         }
 }
 
@@ -211,7 +211,7 @@ woc_height(){
         [[ "$2" == "stn" ]] && net=stn
         if [[ -p "/dev/stdin" ]]; then height="$(cat)"; else
                 height="$1"
-                if [[ -z "$1" ]]; then echo "provide a height as \$1 or pipe in a height"; exit 1; fi; fi
+                if [[ -z "$1" ]]; then echo "provide a height as \$1 or pipe in a height"; return; fi; fi
         wocHeight=$(curl_GET "/block/height/$height")
         echo "$wocHeight" | jq
         truncateCheck=$(echo "$wocHeight" | jq | grep '"isTruncated": true' | awk '{ print $2 }')
@@ -508,7 +508,7 @@ woc_ratecalc() {
                 bsv_amount="$1"
                 if [[ -z "$1" ]]; then
                         echo "provide a bsv amount as \$1"
-                        exit 1
+                        return
                 fi
         fi
         theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
