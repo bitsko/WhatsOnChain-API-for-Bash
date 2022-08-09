@@ -636,7 +636,7 @@ woc_currentblockinfo(){
 }
 
 woc_current100tx(){
-        woc_currentblockinfo | jq .tx | sed 's/"//g;s/,//g;s/[[]//g;s/[]]//g;/^$/d;s/ //g'
+        woc_currentblockinfo | jq .tx | sed 's/"//g;s/,//g;s/[[]//g;s/[]]//g;/^$/d;s/ //g' | sed 's/null//g' | sed '/^[[:space:]]*$/d'
 }
 
 woc_newrandtx(){
