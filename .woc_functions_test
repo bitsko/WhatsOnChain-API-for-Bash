@@ -278,12 +278,12 @@ WOCHELP
 }
 ##############################################################################################################################
 
-curl_GET(){
+woc_curl_GET(){
         curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/${woc_net_}${1}"
 }
 
-jq_GET(){
-	jq<<<$(curl_GET ${1})
+woc_jq_GET(){
+	jq<<<$(woc_curl_GET ${1})
 }
 
 woc_helper(){
@@ -302,21 +302,21 @@ woc_info(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-	jq_GET "/chain/info"
+	woc_jq_GET "/chain/info"
 }
 
 woc_circulatingsupply(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-        curl_GET "/circulatingsupply"
+        woc_curl_GET "/circulatingsupply"
 }
 
 woc_tips(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-	jq_GET "/chain/tips"
+	woc_jq_GET "/chain/tips"
 }
 
 woc_blockhash(){
@@ -324,7 +324,7 @@ woc_blockhash(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/block/hash/$1"
+	woc_jq_GET "/block/hash/$1"
 }
 
 woc_height(){
@@ -340,9 +340,9 @@ woc_height(){
 			return
 		fi
 	fi
-        wocHeight=$(jq_GET "/block/height/$woc_height")
-        echo "$wocHeight"
-        truncateCheck=$(echo "$wocHeight" | grep '"isTruncated": true' | awk '{ print $2 }')
+        wocHeight=$(woc_jq_GET "/block/height/$woc_height")
+        jq<<<"$wocHeight"
+        truncateCheck=$(jq<<<"$wocHeight" | grep '"isTruncated": true' | awk '{ print $2 }')
         if [[ "$truncateCheck" == "true" ]]; then
 		echo $'\n'"Output is Truncated."$'\n'
 		return
@@ -363,7 +363,7 @@ woc_pages(){
         woc_net_=main
         [[ "$3" == "test" ]] && woc_net_=test
         [[ "$3" == "stn" ]] && woc_net_=stn
-	jq_GET "/block/hash/$1/page/$2"
+	woc_jq_GET "/block/hash/$1/page/$2"
 }
 
 woc_headerbyhash(){
@@ -376,14 +376,14 @@ woc_headerbyhash(){
         	woc_hash_="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-	jq_GET "/block/$woc_hash_/header"
+	woc_jq_GET "/block/$woc_hash_/header"
 }
 
 woc_headers(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-	jq_GET "/block/headers"
+	woc_jq_GET "/block/headers"
 }
 
 woc_txhash(){
@@ -396,7 +396,7 @@ woc_txhash(){
                 woc_hash_="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-        txHash=$(curl_GET "/tx/hash/$woc_hash_")
+        txHash=$(woc_curl_GET "/tx/hash/$woc_hash_")
         jq<<<"$txHash"
         truncateCheck=$(jq<<<"$txHash" | grep '"isTruncated": true' | awk '{ print $2 }')
         if [[ "$truncateCheck" == "true" ]]; then echo $'\n'"Output is Truncated. Use:"$'\n'"woc_rawtxout $1"$'\n'; return; fi
@@ -459,7 +459,7 @@ woc_hex(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-        curl_GET "/tx/$woc_hash_/hex"
+        woc_curl_GET "/tx/$woc_hash_/hex"
 }
 
 woc_bulkhex(){
@@ -483,7 +483,7 @@ woc_rawtxout(){
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
         voutCount=0; if [[ -n "$2" ]]; then voutCount="$2"; fi
-        curl_GET "/tx/$woc_hash_/out/$voutCount/hex"
+        woc_curl_GET "/tx/$woc_hash_/out/$voutCount/hex"
 }
 
 woc_merkleproof(){
@@ -496,21 +496,21 @@ woc_merkleproof(){
                 woc_hash_="$1"
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
-	jq_GET "/tx/$woc_hash_/proof"
+	woc_jq_GET "/tx/$woc_hash_/proof"
 }
 
 woc_mempoolinfo(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-	jq_GET "/mempool/info"
+	woc_jq_GET "/mempool/info"
 }
 
 woc_mempoolraw(){
         woc_net_=main
         [[ "$1" == "test" ]] && woc_net_=test
         [[ "$1" == "stn" ]] && woc_net_=stn
-	jq_GET "/mempool/raw"
+	woc_jq_GET "/mempool/raw"
 }
 
 woc_addressinfo(){
@@ -526,7 +526,7 @@ woc_addressinfo(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/address/$bsv_address/info"
+	woc_jq_GET "/address/$bsv_address/info"
 }
 
 woc_addressbalance(){
@@ -534,7 +534,7 @@ woc_addressbalance(){
 	woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/address/$1/balance"
+	woc_jq_GET "/address/$1/balance"
 }
 
 woc_bulkbalance(){
@@ -552,7 +552,7 @@ woc_addresshistory(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/address/$1/history"
+	woc_jq_GET "/address/$1/history"
 }
 
 woc_unspent(){
@@ -560,7 +560,7 @@ woc_unspent(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/address/$1/unspent"
+	woc_jq_GET "/address/$1/unspent"
 }
 
 woc_bulkunspent(){
@@ -584,7 +584,7 @@ woc_scripthistory(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/script/$1/history"
+	woc_jq_GET "/script/$1/history"
 }
 
 woc_scriptunspent(){
@@ -592,7 +592,7 @@ woc_scriptunspent(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
-	jq_GET "/script/$1/unspent"
+	woc_jq_GET "/script/$1/unspent"
 }
 
 woc_bulkscriptunspent(){
