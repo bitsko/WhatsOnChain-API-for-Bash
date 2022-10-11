@@ -51,6 +51,7 @@ ${bld_text}woc_info${reg_text} - Retrieves information about the state of the ch
 ${bld_text}woc_circulatingsupply${reg_text} - Retrieves the circulating supply of BSV
 ${bld_text}woc_tips${reg_text} - Retrieves information about all known tips in the block tree
 ${bld_text}woc_blockhash${reg_text} - Retrieves the block details of a given hash
+${bld_text}woc_getblockhash${reg_text} - Retrieves the blcok hash by block height
 ${bld_text}woc_height${reg_text} - Retrieves the block details of a given block height
 ${bld_text}woc_getblockcount${reg_text} - Posts the current block number
 ${bld_text}woc_currentblockinfo${reg_text} - Retrieves the block details of the current block
@@ -325,6 +326,10 @@ woc_blockhash(){
         [[ "$2" == "test" ]] && woc_net_=test
         [[ "$2" == "stn" ]] && woc_net_=stn
 	woc_jq_GET "/block/hash/$1"
+}
+
+woc_getblockhash(){
+	woc_height $1 | jq -r .coinbaseTx.blockhash | head -n 1
 }
 
 woc_height(){
