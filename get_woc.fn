@@ -1,0 +1,9 @@
+get_woc(){
+        woc_sourcefile=".woc_functions_test"
+        woc_source_url="https://raw.githubusercontent.com/bitsko/Whats-On-Chain-API-for-Bash/main/"
+        woc_github_url="${woc_source_url}${woc_sourcefile}"
+        wget ${woc_github_url}
+        source "${woc_sourcefile}"
+        rm "${woc_sourcefile}"
+        woc
+}
