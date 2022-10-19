@@ -648,7 +648,7 @@ woc_newrandtx(){
         woc_current100tx | shuf -n 1
 }
 
-woc_ratecalc() {
+woc_ratecalc(){
         if [[ -p "/dev/stdin" ]]; then
                 bsv_amount="$(cat)"
         else
@@ -660,4 +660,15 @@ woc_ratecalc() {
         fi
         theRate=$(curl -s https://api.whatsonchain.com/v1/bsv/main/exchangerate | jq -r .rate)
         echo "$theRate * $bsv_amount" | bc
+}
+
+woc_lastblocktime(){
+	current_unix_time=$(date +%s)
+	last_block_time=$(woc_getblockcount | woc_height | jq .time | awk NR==1)
+	distance_in_seconds=$(echo "$current_unix_time - $last_block_time" | bc)
+	if [[ $1 == "-h" ]]; then
+		echo "$(echo "$distance_in_seconds / 60" | bc) minutes since last bsv block"
+	else
+		echo $distance_in_seconds
+	fi
 }
