@@ -4,6 +4,8 @@
 # Use at your own risk
 # https://developers.whatsonchain.com/#introduction
 
+# dependencies: jq, curl, grep, awk
+
 # $ wget https://raw.githubusercontent.com/bitsko/Whats-On-Chain-API-for-Bash/main/.woc_functions_test
 
 # add these functions to your shell session by typing:
