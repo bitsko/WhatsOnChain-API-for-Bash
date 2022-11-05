@@ -362,7 +362,7 @@ woc_height(){
 	fi
         txcount="$(jq .txcount<<<$wocHeight)"
         if [[ $(jq .tx<<<"$wocHeight" | wc -l) == 102 ]] && [[ "$txcount" != 100 ]]; then
-                echo "{\"tx_isTruncated\": \"true\"}"
+                echo "{"$'\n'"\"tx_isTruncated\": \"true\""$'\n'"}"
 		return
 	fi
         if [[ -z "$wocHeight" ]]; then
