@@ -85,12 +85,13 @@ ${bld_text}woc_exchangerate${reg_text} - This endpoint provides exchange rate fo
 ${bld_text}woc_usd${reg_text} - Retrieves the USD price of BSV and posts the date
 ${bld_text}woc_getlinks${reg_text} - Identifies whether the posted query text is a block hash, txid or address and responds with WoC links
 ${bld_text}woc_help${reg_text} - Examples of use
-${bld_text}woc_newrandtx${reg_text}
-${bld_text}woc_current100tx${reg_text}
-${bld_text}woc_ratecalc${reg_text}
-${bld_text}woc_currentblockinfo${reg_text}
+${bld_text}woc_newrandtx${reg_text} - grabs 1 random transaction from the listing of 100 transactions in the most recent block
+${bld_text}woc_current100tx${reg_text} - grabs the listing of 100 transactions from the most recent block
+${bld_text}woc_ratecalc${reg_text} - calculates the USD value of a given amount of BSV
+${bld_text}woc_currentblockinfo${reg_text} - presents info on the current block
 ${bld_text}woc_lastblocktime${reg_text} - prints the difference in seconds to last block time, or with -h, difference in minutes
 ${bld_text}woc_read_coinbase${reg_text} - finds and prints text strings in the coinbase given a block hash
+${bld_text}woc_getbestblockhash${reg_text} - prints the best blockhash
 WHATSONCHAINFORBASH
 }
 
@@ -693,4 +694,8 @@ woc_read_coinbase(){
 		| jq -r .[].coinbase \
 		| xxd -r -p \
 		| strings -7
+}
+
+woc_getbestblockhash(){
+	woc_info | jq -r .bestblockhash
 }
