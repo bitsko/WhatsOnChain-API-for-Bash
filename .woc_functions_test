@@ -281,6 +281,7 @@ ${grn_text}Example:
 ${ylw_text}woc_getlinks 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa${reg_text}
 WOCHELP
 }
+
 ##############################################################################################################################
 
 woc_curl_GET(){
@@ -304,6 +305,10 @@ woc_jqcheck(){
 
 woc_functionlist(){
 	declare -F | grep "woc_" | awk '{ print $3 }' | grep -v GET
+}
+
+woc_unset(){
+	unset $(woc_functionlist | tr '\n' ' ')
 }
 
 ##############################################################################################################################
