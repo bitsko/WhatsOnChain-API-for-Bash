@@ -344,7 +344,7 @@ woc_blockhash(){
 }
 
 woc_getblockhash(){
-	woc_height $1 | jq -r .coinbaseTx.blockhash | head -n 1
+	woc_blockhash $1
 }
 
 woc_height(){
