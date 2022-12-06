@@ -90,6 +90,7 @@ ${bld_text}woc_current100tx${reg_text}
 ${bld_text}woc_ratecalc${reg_text}
 ${bld_text}woc_currentblockinfo${reg_text}
 ${bld_text}woc_lastblocktime${reg_text} - prints the difference in seconds to last block time, or with -h, difference in minutes
+${blk_text}woc_readcoinbase${reg_text} - finds and prints text strings in the coinbase given a block hash
 WHATSONCHAINFORBASH
 }
 
@@ -679,4 +680,12 @@ woc_lastblocktime(){
 	else
 		echo $distance_in_seconds
 	fi
+}
+
+woc_read_coinbase(){
+	woc_blockhash $1 \
+		| jq .coinbaseTx.vin \
+		| jq -r .[].coinbase \
+		| xxd -r -p \
+		| strings -7
 }
