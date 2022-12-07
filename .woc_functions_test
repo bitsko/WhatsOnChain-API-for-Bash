@@ -92,6 +92,7 @@ ${bld_text}woc_currentblockinfo${reg_text} - presents info on the current block
 ${bld_text}woc_lastblocktime${reg_text} - prints the difference in seconds to last block time, or with -h, difference in minutes
 ${bld_text}woc_read_coinbase${reg_text} - finds and prints text strings in the coinbase given a block hash
 ${bld_text}woc_getbestblockhash${reg_text} - prints the best blockhash
+${bld_text}woc_get_unpaginated_txlist${reg_text} - creates a file of every transaction in a block from the transaction pages
 WHATSONCHAINFORBASH
 }
 
@@ -699,3 +700,57 @@ woc_read_coinbase(){
 woc_getbestblockhash(){
 	woc_info | jq -r .bestblockhash
 }
+
+woc_get_unpaginated_txlist(){
+	
+	_woc_curl_GET(){
+       		curl -s --location --request GET \
+		"https://api.whatsonchain.com/v1/bsv/main${1}"
+	}
+
+	_woc_jq_GET(){
+		jq<<<$(_woc_curl_GET "${1}")
+	}
+
+	_woc_pages(){
+		_woc_jq_GET "/block/hash/$1/page/$2"
+	}
+
+	_woc_info(){
+		_woc_jq_GET "/chain/info"
+	}
+
+	_woc_current=$1
+
+	if [[ -z $1 ]]; then
+		read -r -p "which block?" _woc_current
+	fi
+
+	_wocHeight=$(_woc_jq_GET "/block/height/$_woc_current")
+
+	if [[ -z "$_wocHeight" ]]; then
+		echo "Block not found. Chain is $(_woc_info | jq .blocks) blocks long"
+		exit 1
+	fi
+
+	get_blkhash=$(jq -r .hash <<<"$_wocHeight")
+	first_100tx=$(jq .tx <<<"$_wocHeight" | jq -r .[])
+	txlist_name="$_woc_current.$get_blkhash.txlist"
+	txcount="$(jq .txcount<<<$_wocHeight)"
+
+	echo "$first_100tx" > "$txlist_name"
+
+	if [[ $(jq .tx<<<"$_wocHeight" | wc -l) == 102 ]] && [[ "$txcount" != 100 ]]; then
+		currentpage=1
+		pages_count=$(jq .pages.uri <<<"$_wocHeight" | jq -r .[] | wc -l)
+		while [[ $currentpage -le $pages_count ]]; do
+			_woc_pages "$get_blkhash" "$currentpage" | jq -r .[] >> "$txlist_name"
+			currentpage=$((currentpage + 1))
+		done
+	fi
+
+	txs_in_block=$(jq .num_tx <<<"$_wocHeight" )
+	echo "txs in block : $txs_in_block"
+	echo "tx downloaded: $(wc -l $txlist_name)"
+}
+
