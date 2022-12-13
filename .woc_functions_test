@@ -348,6 +348,15 @@ woc_getblockhash(){
 	woc_height $1 | jq -r .coinbaseTx.blockhash | head -n 1
 }
 
+woc_getblock(){
+	woc_getblockhash $1
+	# if [[ $2 == 0 ]]; then
+		# experimental function
+		# echo "this will take some time..."
+		# add return raw hex function here
+	# fi
+}
+
 woc_height(){
         woc_net_=main
         [[ "$2" == "test" ]] && woc_net_=test
@@ -398,6 +407,10 @@ woc_headerbyhash(){
 		[[ -z "$1" ]] && echo "provide a hash as \$1 or pipe in a hash" && return
         fi
 	woc_jq_GET "/block/$woc_hash_/header"
+}
+
+woc_getblockheader(){
+	woc_headerbyhash "$1"
 }
 
 woc_headers(){
@@ -657,7 +670,7 @@ woc_currentblockinfo(){
 }
 
 woc_current100tx(){
-        woc_currentblockinfo | jq .tx | sed 's/"//g;s/,//g;s/[[]//g;s/[]]//g;/^$/d;s/ //g' | sed 's/null//g' | sed '/^[[:space:]]*$/d'
+	woc_currentblockinfo | jq -r .tx | sed 's/null//g' | jq -r .[] | tee "100tx.$EPOCHSECONDS.txt"
 }
 
 woc_newrandtx(){
@@ -685,7 +698,7 @@ woc_lastblocktime(){
 	if [[ $1 == "-h" ]]; then
 		echo "$(echo "$distance_in_seconds / 60" | bc) minutes since last bsv block"
 	else
-		echo $distance_in_seconds
+		echo "$distance_in_seconds"
 	fi
 }
 
@@ -702,7 +715,7 @@ woc_getbestblockhash(){
 }
 
 woc_get_unpaginated_txlist(){
-	
+
 	_woc_curl_GET(){
        		curl -s --location --request GET \
 		"https://api.whatsonchain.com/v1/bsv/main${1}"
@@ -754,3 +767,47 @@ woc_get_unpaginated_txlist(){
 	echo "tx downloaded: $(wc -l $txlist_name)"
 }
 
+decimaltohex(){
+	#takes the version as a decimal
+	#pads 0's to 4 bytes
+	decimal_to_hex=$(printf '%x\n' "$1")
+	dec2hex_length=$(awk '{ print length }' <<<"$decimal_to_hex")
+	padding_length=$((8 - dec2hex_length))
+	current_length=0
+	while [[ $current_length -lt $padding_length ]]; do
+		echo -n 0
+		current_length=$((current_length +1))
+	done
+	echo -n "$decimal_to_hex"
+}
+
+swapendian(){
+	#changes the endianness of the bytes
+        reversed=$(rev <<<"$1")
+        while IFS=' ' read -r -n2 byte; do
+                echo -n "$(rev<<<$byte)"
+        done <<<"$reversed"
+}
+
+get_jq_value(){
+	jq -r "${1}"<<<"$block_to_reconstruct"
+}
+
+header_jq(){
+	jq -r "${1}"<<<"$bitcoin_header_"
+}
+
+woc_getblockheader_hex_by_height(){
+	block_to_reconstruct=$(woc_height "$1")
+	bitcoin_header_=$(woc_headerbyhash $(get_jq_value ".hash"))
+	decimal_version=$(get_jq_value ".version" | sed 's/,//g' | head -n 1)
+	bitcoin_version=$(swapendian $(decimaltohex "$decimal_version"))
+	prev_blockhash_=$(swapendian $(get_jq_value ".previousblockhash"))
+	bitcoin_merkle_=$(swapendian $(get_jq_value ".merkleroot"))
+	bitcoinunixtime=$(swapendian $(decimaltohex $(get_jq_value ".time")))
+	bitcointargbits=$(swapendian $(header_jq ".bits"))
+	bitcoinblknonce=$(swapendian $(decimaltohex $(header_jq ".nonce" | sed 's/,//g')))
+	header_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
+	header_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
+	echo "${header_part_1}${header_part_2}"
+}
