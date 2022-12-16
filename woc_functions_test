@@ -802,17 +802,32 @@ header_jq(){
 }
 
 woc_getblockheader_hex_by_height(){
+	echo; echo "HEADER DEBUG"; echo
 	block_to_reconstruct=$(woc_height "$1")
 	bitcoin_header_=$(woc_headerbyhash $(get_jq_value ".hash"))
+	echo "bitcoin header: $bitcoin_header_"
 	decimal_version=$(get_jq_value ".version" | sed 's/,//g' | head -n 1)
+	echo "decimal version: $decimal_version"
 	bitcoin_version=$(swapendian $(decimaltohex "$decimal_version"))
+	echo "bitcoin_version: $bitcoin_version"
 	prev_blockhash_=$(swapendian $(get_jq_value ".previousblockhash"))
+                if [[ -z $prev_blockhash_ && $1 == 0 ]]; then
+                        prev_blockhash_=0000000000000000000000000000000000000000000000000000000000000000
+                fi
+
+	echo "prev blockhash $prev_blockhash_"
 	bitcoin_merkle_=$(swapendian $(get_jq_value ".merkleroot"))
+	echo "bitcoin merkle $bitcoin_merkle_"
 	bitcoinunixtime=$(swapendian $(decimaltohex $(get_jq_value ".time")))
+	echo "bitcoinunix time $bitcoinunixtime"
 	bitcointargbits=$(swapendian $(header_jq ".bits"))
+	echo "bitcointargbits $bitcointargetbits"
 	bitcoinblknonce=$(swapendian $(decimaltohex $(header_jq ".nonce" | sed 's/,//g')))
+	echo "bitcoin blk nonce: $bitcoinblknonce"
 	header_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
+	echo "header part 1 $header_part_1"
 	header_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
+	echo "header part 2 $header_part_2"
 	echo "${header_part_1}${header_part_2}"
 }
 
@@ -864,23 +879,42 @@ woc_txlist(){
 }
 
 woc_get_serialized_block(){
+	echo; echo "HEADER DEBUG"; echo
 	block_to_reconstruct=$(woc_height "$1")
 	bitcoin_header_=$(woc_headerbyhash $(get_jq_value ".hash"))
+	echo "bitcoin header: $bitcoin_header_"
 	decimal_version=$(get_jq_value ".version" | sed 's/,//g' | head -n 1)
+	echo "decimal version: $decimal_version"
 	bitcoin_version=$(swapendian $(decimaltohex "$decimal_version"))
+	echo "bitcoin_version: $bitcoin_version"
 	prev_blockhash_=$(swapendian $(get_jq_value ".previousblockhash"))
+                if [[ -z $prev_blockhash_ && $1 == 0 ]]; then
+			prev_blockhash_=0000000000000000000000000000000000000000000000000000000000000000
+		fi
+	echo "prev blockhash $prev_blockhash_"
 	bitcoin_merkle_=$(swapendian $(get_jq_value ".merkleroot"))
+	echo "bitcoin merkle $bitcoin_merkle_"
 	bitcoinunixtime=$(swapendian $(decimaltohex $(get_jq_value ".time")))
+	echo "bitcoinunix time $bitcoinunixtime"
 	bitcointargbits=$(swapendian $(header_jq ".bits"))
+	echo "bitcointargbits $bitcointargbits"
 	bitcoinblknonce=$(swapendian $(decimaltohex $(header_jq ".nonce" | sed 's/,//g')))
+	echo "bitcoin blk nonce: $bitcoinblknonce"
+	header_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
+	echo "header part 1 $header_part_1"
+	header_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
+	echo "header part 2 $header_part_2"
+	echo "both header parts"
+	echo "${header_part_1}${header_part_2}"
+
+	echo "serialized block debug"
 	# may not be robust
 	block_txs_count=$(get_jq_value ".txcount")
-#	echo "block_txs_count $block_txs_count"
+	echo "present transactions count $block_txs_count"
 	block_tx_varint=$(txvarint_dec2hex "$block_txs_count")
-#	echo "block_tx_varint $block_tx_varint"
+	echo "present block transaction count varint $block_tx_varint"
 	# not robust
 	blocks_txs_list=$(jq .tx<<<"$block_to_reconstruct" | sed 's/null//g' | jq -r .[])
-#	echo "blocks_txs_list $blocks_txs_list"
 	make_serialized_txstream(){
 		temp_txstream_file=bitcoin.rawtxstream.block.temp
 		if [[ -f $temp_txstream_file ]]; then
@@ -889,20 +923,24 @@ woc_get_serialized_block(){
 		fi
 		while IFS=' ' read -r line; do
 			raw_transaction=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/main/tx/${line}/hex")
-#			echo "raw transaction $raw_transaction"
 			echo -n "$raw_transaction" >> "$temp_txstream_file"
 		done<<<"$blocks_txs_list"
 	}
 	make_serialized_txstream
 	serialized_txstream=$(cat "$temp_txstream_file")
+	echo "present serialized stream of tx: $serialized_txstream"
 	raw_block_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
 	raw_block_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
+	bitcoin_block_hd="${raw_block_part_1}${raw_block_part_2}"
+	echo "bitcoin block header is: $bitcoin_block_hd"
 	raw_block_part_3="${block_tx_varint}${serialized_txstream}"
-	complete_blk_hex="${raw_block_part_1}${raw_block_part_2}${raw_block_part_3}"
+	complete_blk_hex="${bitcoin_block_hd}${raw_block_part_3}"
 	raw_block_len=$(awk '{print length/2}'<<<"$complete_blk_hex")
-#	echo "raw block length $raw_block_len"
+	echo "present raw block length $raw_block_len"
 	block_byte_sz=$(decimaltohex "$raw_block_len")
+	echo "present block byte size $block_byte_sz"
 	blocksize_ibo=$(swapendian "$block_byte_sz")
+	echo "$blocksize ibo $blocksize_ibo"
 	magic_bytes="f9beb4d9"
 	blkfilestring="${magic_bytes}${blocksize_ibo}${complete_blk_hex}"
 	echo "block file string"
