@@ -22,14 +22,18 @@
 # $ woc_help
 
 tput_coloring(){
-	[[ -z $(command -v tput) ]] && echo "requires tput" && return
-	red_text=$(tput setaf 1)
-	wht_text=$(tput setaf 7)
-	blu_text=$(tput setaf 4)
-	reg_text=$(tput sgr0)
-	grn_text=$(tput setaf 2)
-	bld_text=$(tput bold)
-	ylw_text=$(tput setaf 3)
+	if [[ -z $(command -v tput) ]]; then
+		echo "requires tput"
+		return
+	else
+		red_text=$(tput setaf 1)
+		wht_text=$(tput setaf 7)
+		blu_text=$(tput setaf 4)
+		reg_text=$(tput sgr0)
+		grn_text=$(tput setaf 2)
+		bld_text=$(tput bold)
+		ylw_text=$(tput setaf 3)
+	fi
 }
 tput_coloring
 
@@ -670,7 +674,7 @@ woc_currentblockinfo(){
 }
 
 woc_current100tx(){
-	woc_currentblockinfo | jq -r .tx | sed 's/null//g' | jq -r .[] | tee "100tx.$EPOCHSECONDS.txt"
+	woc_currentblockinfo | jq -r .tx | sed 's/null//g' | jq -r .[] | tee -a "100tx.$EPOCHSECONDS.txt"
 }
 
 woc_newrandtx(){
@@ -810,4 +814,97 @@ woc_getblockheader_hex_by_height(){
 	header_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
 	header_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
 	echo "${header_part_1}${header_part_2}"
+}
+
+txvarint_dec2hex(){
+	set -e
+	dec2hex_var=$(printf '%x\n' "$1")
+	dec2hex_len=$(awk '{ print length }'<<<"$dec2hex_var")
+	if [[ $dec2hex_len == 1 || $dec2hex_len == 15 ]] || \
+		[[ $dec2hex_len == 7 || $dec2hex_len == 3 ]]; then
+		dec2hex_var="0${dec2hex_var}"
+	elif [[ $dec2hex_len == 5 || $dec2hex_len == 13 ]]; then
+		dec2hex_var="000${dec2hex_var}"
+	elif [[ $dec2hex_len == 6 || $dec2hex_len == 14 ]]; then
+		dec2hex_var="00${dec2hex_var}"
+	elif [[ $dec2hex_len == 9 ]]; then
+		dec2hex_var="0000000${dec2hex_var}"
+	elif [[ $dec2hex_len == 10 ]]; then
+		dec2hex_var="000000${dec2hex_var}"
+	elif [[ $dec2hex_len == 11 ]]; then
+		dec2hex_var="00000${dec2hex_var}"
+	elif [[ $dec2hex_len == 12 ]]; then
+		dec2hex_var="0000${dec2hex_var}"
+	fi
+	dec2hex_len=$(awk '{ print length }'<<<"$dec2hex_var")
+	if [[ $dec2hex_len == 4 ]]; then
+		dec2hex_var="fd${dec2hex_var}"
+	elif [[ $dec2hex_len == 8 ]]; then
+		dec2hex_var="fe${dec2hex_var}"
+	elif [[ $dec2hex_len == 16 ]]; then
+		dec2hex_var="ff${dec2hex_var}"
+	fi
+	echo "$dec2hex_var"
+}
+
+woc_txlist(){
+	woc_height_info=$(woc_height "$1")
+	truncate_check=$(jq -r .tx_isTruncated<<<"$woc_height_info" | sed 's/null//g;/^$/d')
+	if [[ $truncate_check == true ]]; then
+		echo "woc_get_unpaginated_txlist"
+		woc_get_unpaginated_txlist
+		txcount=$(wc -l "$txlist_name")
+		tx_list=$(cat "$txlist_name")
+	else
+		tx_list=$(jq .tx | jq -r .[]<<<"$woc_height_info")
+		echo "$tx_list"
+		txcount=$(wc -l<<<"$tx_list")
+	fi
+	echo "txcount: $txcount"
+}
+
+woc_get_serialized_block(){
+	block_to_reconstruct=$(woc_height "$1")
+	bitcoin_header_=$(woc_headerbyhash $(get_jq_value ".hash"))
+	decimal_version=$(get_jq_value ".version" | sed 's/,//g' | head -n 1)
+	bitcoin_version=$(swapendian $(decimaltohex "$decimal_version"))
+	prev_blockhash_=$(swapendian $(get_jq_value ".previousblockhash"))
+	bitcoin_merkle_=$(swapendian $(get_jq_value ".merkleroot"))
+	bitcoinunixtime=$(swapendian $(decimaltohex $(get_jq_value ".time")))
+	bitcointargbits=$(swapendian $(header_jq ".bits"))
+	bitcoinblknonce=$(swapendian $(decimaltohex $(header_jq ".nonce" | sed 's/,//g')))
+	# may not be robust
+	block_txs_count=$(get_jq_value ".txcount")
+#	echo "block_txs_count $block_txs_count"
+	block_tx_varint=$(txvarint_dec2hex "$block_txs_count")
+#	echo "block_tx_varint $block_tx_varint"
+	# not robust
+	blocks_txs_list=$(jq .tx<<<"$block_to_reconstruct" | sed 's/null//g' | jq -r .[])
+#	echo "blocks_txs_list $blocks_txs_list"
+	make_serialized_txstream(){
+		temp_txstream_file=bitcoin.rawtxstream.block.temp
+		if [[ -f $temp_txstream_file ]]; then
+			rm $temp_txstream_file
+			touch "$temp_txstream_file"
+		fi
+		while IFS=' ' read -r line; do
+			raw_transaction=$(curl -s --location --request GET "https://api.whatsonchain.com/v1/bsv/main/tx/${line}/hex")
+#			echo "raw transaction $raw_transaction"
+			echo -n "$raw_transaction" >> "$temp_txstream_file"
+		done<<<"$blocks_txs_list"
+	}
+	make_serialized_txstream
+	serialized_txstream=$(cat "$temp_txstream_file")
+	raw_block_part_1="${bitcoin_version}${prev_blockhash_}${bitcoin_merkle_}"
+	raw_block_part_2="${bitcoinunixtime}${bitcointargbits}${bitcoinblknonce}"
+	raw_block_part_3="${block_tx_varint}${serialized_txstream}"
+	complete_blk_hex="${raw_block_part_1}${raw_block_part_2}${raw_block_part_3}"
+	raw_block_len=$(awk '{print length/2}'<<<"$complete_blk_hex")
+#	echo "raw block length $raw_block_len"
+	block_byte_sz=$(decimaltohex "$raw_block_len")
+	blocksize_ibo=$(swapendian "$block_byte_sz")
+	magic_bytes="f9beb4d9"
+	blkfilestring="${magic_bytes}${blocksize_ibo}${complete_blk_hex}"
+	echo "block file string"
+	echo "$blkfilestring" | tee bitcoin_raw_block.hex
 }
