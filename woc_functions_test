@@ -908,8 +908,9 @@ woc_get_serialized_block(){
 	echo "${header_part_1}${header_part_2}"
 
 	echo "serialized block debug"
-	# may not be robust
-	block_txs_count=$(get_jq_value ".txcount")
+	# is not be robust
+
+	block_txs_count=$(get_jq_value ".txcount" | head -n 1)
 	echo "present transactions count $block_txs_count"
 	block_tx_varint=$(txvarint_dec2hex "$block_txs_count")
 	echo "present block transaction count varint $block_tx_varint"
